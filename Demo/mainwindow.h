@@ -33,8 +33,9 @@ private:
         short type;
         char ip[19];
         short length;
-        char *tdata;
+        char tdata[0];
     };
+    struct header *h;
     void InitArray(header head);
     short getType(QString data);
     QString testmsg;

@@ -38,9 +38,10 @@ MainWindow::~MainWindow()
 
 void MainWindow::InitArray(header head)
 {
-    head.tdata = (char*)malloc(head.length);
+    //head.tdata = (char*)malloc(head.length);
     //qDebug() << ("%d\n",head.length);
-
+    h = (struct header *)malloc(sizeof(struct header)+head.length);
+    h->length = head.length;
 }
 
 short MainWindow::getType(QString data)
@@ -82,7 +83,8 @@ void MainWindow::connectServer()
 void MainWindow::read_data()
 {
     QByteArray msg = tcpSocket->readAll();                              //接收服务器发送过来的数据
-    ui->text_info->insertPlainText(QString(QString::number(row,10)+":"+msg+"\n").arg(row++));       //每次开启程序row都为0，在row行添加文字
+    ui->text_info->insertPlainText(QString(msg+"\n").arg(row++));
+    //ui->text_info->insertPlainText(QString(QString::number(row,10)+":"+msg+"\n").arg(row++));       //每次开启程序row都为0，在row行添加文字
     ui->text_info->moveCursor(QTextCursor::End);                        //设置光标位末尾行
     //qDebug()<<QString(msg);
     //unsigned short size = msg.size();
@@ -115,19 +117,20 @@ void MainWindow::sendDatatoServer(QString data)
 {
     getIp();
     struct header head;          //初始化结构体
-    head.type = getType(data);
+    //head.type = getType(data);
     head.length = data.length();
-    QByteArray strbyte = ip.toLatin1();     //将选中网卡对应的ip地址放到结构体中
-    strcpy(head.ip,strbyte.data());
     InitArray(head);
+    QByteArray strbyte = ip.toLatin1();     //将选中网卡对应的ip地址放到结构体中
+    h->type = getType(data);
+    strcpy(h->ip,strbyte.data());
     QByteArray ba = data.toLatin1();         //将协议类型和测试功能码放入结构体
-    strcpy(head.tdata,ba.data());
+    strcpy(h->tdata,ba.data());
     //qDebug() << ("%s",head.tdata);                   //写入结构体能正确输出
     //qDebug() << ("%s\n",head.ip);
 
     QByteArray strdata;
     strdata.resize((sizeof(struct header)+head.length));
-    memcpy(strdata.data(),&head,(sizeof(struct header)+head.length));
+    memcpy(strdata.data(),h,(sizeof(struct header)+head.length));
     tcpSocket->write(strdata);
     tcpSocket->flush();     //通过tcp向服务器发送消息
 
