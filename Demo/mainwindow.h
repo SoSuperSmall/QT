@@ -28,18 +28,9 @@ private:
     void displayError(QAbstractSocket::SocketError);
     void sendDatatoServer(QString data);
     void addItem_2();
-    struct header
-    {
-        short type;
-        char ip[19];
-        short length;
-        char tdata[0];
-    };
-    struct header *h;
-    void InitArray(header head);
     short getType(QString data);
     QString testmsg;
-    void getIp();
+    void InitArray();
 
 private slots:
     void on_actionConnect_triggered();
