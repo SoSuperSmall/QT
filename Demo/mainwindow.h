@@ -22,6 +22,7 @@ public:
     ~MainWindow();
 
 private:
+    QString ip;
     QTcpSocket *tcpSocket;
     void connectServer();
     void displayError(QAbstractSocket::SocketError);
@@ -34,7 +35,7 @@ private:
         short length;
         char *tdata;
     };
-    void InitArray(QString data,header head);
+    void InitArray(header head);
     short getType(QString data);
     QString testmsg;
     void getIp();

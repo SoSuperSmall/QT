@@ -38,7 +38,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::InitArray(header head)
 {
-    head.tdata = (char*)malloc(head.length*sizeof(char));
+    head.tdata = (char*)malloc(head.length);
     //qDebug() << ("%d\n",head.length);
 
 }
@@ -75,8 +75,6 @@ void MainWindow::connectServer()
     else
     {
         ui->info_1->setText("IP: "+testip+"\nport: "+testport+"\n已连接");
-        getIp();
-        qDebug() << QString(ip);
     }
 }
 
@@ -115,6 +113,7 @@ void MainWindow::displayError(QAbstractSocket::SocketError)
 //向服务器发送数据，只发送了一个结构体
 void MainWindow::sendDatatoServer(QString data)
 {
+    getIp();
     struct header head;          //初始化结构体
     head.type = getType(data);
     head.length = data.length();
@@ -127,12 +126,11 @@ void MainWindow::sendDatatoServer(QString data)
     //qDebug() << ("%s\n",head.ip);
 
     QByteArray strdata;
-    strdata.resize(sizeof(struct header));
-    memcpy(strdata.data(),&head,sizeof(struct header));
+    strdata.resize((sizeof(struct header)+head.length));
+    memcpy(strdata.data(),&head,(sizeof(struct header)+head.length));
     tcpSocket->write(strdata);
-    tcpSocket->flush();
-    //tcpSocket->write(data.toLatin1());     //通过tcp向服务器发送消息
-    //tcpSocket->flush();
+    tcpSocket->flush();     //通过tcp向服务器发送消息
+
 }
 
 //点击测试执行按钮进行发送结构体
@@ -206,6 +204,13 @@ void MainWindow::on_listWidget_itemClicked(QListWidgetItem *item)
 
 void MainWindow::getIp()
 {
+    ip = tcpSocket->QAbstractSocket::localAddress().toString();
+
+}
+
+//点击测试加载的函数，函数中暂时写的是获取mac和串口
+void MainWindow::on_btn_loadtest_clicked()
+{
     /*ui->comboBox->clear();
     //获取mac地址和串口
     QList<QNetworkInterface> ifList = QNetworkInterface::allInterfaces();
@@ -237,14 +242,6 @@ void MainWindow::getIp()
         ui->comboBox->addItem(j.portName());
         comList.push_back(j.portName());
     }*/
-    QString loaddr = tcpSocket->QAbstractSocket::localAddress().toString();
-    ip = loaddr;
-}
-
-//点击测试加载的函数，函数中暂时写的是获取mac和串口
-void MainWindow::on_btn_loadtest_clicked()
-{
-
 }
 
 
