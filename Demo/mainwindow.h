@@ -22,20 +22,20 @@ public:
     ~MainWindow();
 
 private:
-    QString ip;
+    QString g_sip;
     QTcpSocket *tcpSocket;
     void connectServer();
-    void displayError(QAbstractSocket::SocketError);
     void sendDatatoServer(QString data);
     void addItem_2();
     short getType(QString data);
-    QString testmsg;
+    QString g_stestmsg;
     void InitArray();
 
 private slots:
     void on_actionConnect_triggered();
     void on_btn_ok_clicked();
     void read_data();
+    void displayError(QAbstractSocket::SocketError);
 
 private slots:
     void receiveData(QString data);

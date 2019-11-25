@@ -73,8 +73,18 @@ void MainWindow::InitArray()
 */
 short MainWindow::getType(QString data)
 {
-
-    return 1;
+    int t=0;
+    if(data.compare("G") == 0)
+    {
+        t = 1;
+    }
+    else if(data.compare("P") == 0)
+        t = 4;
+    else if(data.compare("E") == 0)
+        t = 5;
+    else {
+        return 2;
+    }
 }
 
 /*
@@ -121,7 +131,16 @@ void MainWindow::read_data()
     QByteArray msg = tcpSocket->readAll();                              //接收服务器发送过来的数据
     g_qba = msg;                //拷贝tcp接收的内容
     mac *pm = (mac*)g_qba.data();
-    qDebug() << pm->name<<"---"<<pm->ipaddr;                            //显示一条网卡信息
+    for(int i=0;i<6;i++)
+    {
+        if(strcmp(pm->name,"1") != 0)                        //判断是否有信息
+        {
+            qDebug() << pm->name << "--" << pm->ipaddr;                //显示网卡信息
+        }
+        if(i != 5)
+            pm++;
+    }
+    //qDebug() << pm->name<<"---"<<pm->ipaddr;                       //显示一条网卡消息
 
     //ui->text_info->insertPlainText(QString(QString::number(row,10)+":"+msg+"\n").arg(row++));       //每次开启程序row都为0，在row行添加文字
     //ui->text_info->moveCursor(QTextCursor::End);                        //设置光标位末尾行
@@ -132,9 +151,9 @@ void MainWindow::read_data()
  */
 void MainWindow::displayError(QAbstractSocket::SocketError)
 {
-
-   error = tcpSocket->error();
-   switch (error) {
+   ui->info_1->clear();                     //将显示内容清空
+   error = tcpSocket->error();               //获取错误信息
+   switch (error) {                        //判断错误信息
    case QAbstractSocket::RemoteHostClosedError:
    {
        QString hostAddress = tcpSocket->QAbstractSocket::peerAddress().toString();
@@ -154,10 +173,10 @@ void MainWindow::displayError(QAbstractSocket::SocketError)
  */
 void MainWindow::sendDatatoServer(QString data)
 {
-    ip = tcpSocket->QAbstractSocket::localAddress().toString();
+    g_sip = tcpSocket->QAbstractSocket::localAddress().toString();
     struct header head;          //初始化结构体
     QByteArray strdata;
-    QByteArray strbyte = ip.toLatin1();
+    QByteArray strbyte = g_sip.toLatin1();
     QByteArray ba = data.toLatin1();         //将转换编码
 
     head.length = data.length();            //获取数据长度
@@ -198,15 +217,11 @@ void MainWindow::on_actionDisconnect_triggered()
 }
 
 /*
- * 暂时没有使用，点击确定按钮，将填写的ip和端口号打包到一个字符串中
+ * 点击按键获取网卡列表
  */
 void MainWindow::on_btn_ok_clicked()           //点击确定按钮将信息发给服务端
 {
-    /*QString devip = ui->line_ip->text();
-    QString devport = ui->line_port->text();
-    QString message = devip+" "+devport;    //使用空格隔开ip地址和端口号
-    sendDatatoServer(message);
-    qDebug()<<QString(message);*/
+    sendDatatoServer("G");
 
 }
 
@@ -215,6 +230,7 @@ void MainWindow::on_btn_ok_clicked()           //点击确定按钮将信息发�
 */
 void MainWindow::addItem_2()
 {
+    //第二个Listwidget添加测试项
     QListWidgetItem* it1 = new QListWidgetItem("功能码 03");
     QListWidgetItem* it2 = new QListWidgetItem("功能码 04");
     QListWidgetItem* it3 = new QListWidgetItem("功能码 16");
@@ -223,17 +239,22 @@ void MainWindow::addItem_2()
     ui->listWidget_2->addItem(it3);
 }
 
+/**
+ * @brief MainWindow::on_listWidget_itemClicked
+ * @param item
+ * 协议类型选择函数
+ */
 void MainWindow::on_listWidget_itemClicked(QListWidgetItem *item)
 {
     ui->listWidget->blockSignals(true);    //关闭信号
-    testmsg = "";                           //将要传送的数据清空
+    g_stestmsg = "";                           //将要传送的数据清空
     QString val = item->text();                //获取选中item的值
     QStringList list2 = val.split(" ");        //以空格分隔获取的Item的值，获取协议名前的数字
     //qDebug() << QString(list2[0].mid(1,2)+" ");
-    testmsg = list2[0].mid(1,2)+" ";            //将两位的数字赋值给要传输的信息
+    g_stestmsg = list2[0].mid(1,2)+" ";            //将两位的数字赋值给要传输的信息
     ui->listWidget_2->clear();                  //清空listwidget的所有Item显示
     ui->typeInfo->clear();                     //清空文本浏览框显示
-    switch (list2[0].mid(1,2).toInt())         //1-5分别表示协议类型
+    switch (list2[0].mid(1,2).toInt())         //1-5分别表示协议类型，暂时只有modbus master类型
     {
     case 1:
         break;
@@ -254,7 +275,7 @@ void MainWindow::on_listWidget_itemClicked(QListWidgetItem *item)
         index++;                                           //第一个页面跳转到第二页
     ui->tabWidget->setCurrentIndex(index);                //设置tabwidget显示的页面
     ui->listWidget->blockSignals(false);    //开启信号
-    qDebug() << QString(testmsg);
+    qDebug() << QString(g_stestmsg);
 }
 
 
@@ -296,13 +317,15 @@ void MainWindow::on_btn_loadtest_clicked()
     }*/
 }
 
-
+/*
+ *测试项点击函数
+ */
 void MainWindow::on_listWidget_2_itemClicked(QListWidgetItem *item)
 {
     ui->listWidget_2->blockSignals(true);
     QString fun = item->text();
     QStringList list = fun.split(" ");
-    QString temp = testmsg.mid(0,3);
+    QString temp = g_stestmsg.mid(0,3);
     //qDebug() << QString(temp);
     switch (list[1].toInt())                       //根据不同测试例显示要测试的内容
     {
@@ -320,21 +343,27 @@ void MainWindow::on_listWidget_2_itemClicked(QListWidgetItem *item)
         break;
     }
     temp = temp + list[1];                  //将功能码添加到信息末尾
-    testmsg = temp;                         //将中间值替换
-    qDebug() << QString(testmsg);
+    g_stestmsg = temp;                         //将中间值替换
+    qDebug() << QString(g_stestmsg);
     ui->listWidget_2->blockSignals(false);
 }
 
+/*
+ *测试执行按钮点击
+ */
 void MainWindow::on_btn_starttest_clicked()
 {
-    if(testmsg.length()<5)                    //检查协议类型和测试项是否选择完整
+    if(g_stestmsg.length()<5)                    //检查协议类型和测试项是否选择完整
        QMessageBox::warning(NULL,"warning","请完整选择协议类型和测试项",QMessageBox::Yes);           //选择不完整弹出警告框
     else
     {
-        sendDatatoServer(testmsg);              //选择完整就发送给主程序
+        sendDatatoServer(g_stestmsg);              //选择完整就发送给主程序
     }
 }
 
+/*
+ * 测试结束函数
+ */
 void MainWindow::on_btn_endtest_clicked()
 {
 

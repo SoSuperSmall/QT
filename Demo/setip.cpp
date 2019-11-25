@@ -18,7 +18,9 @@ setIP::~setIP()
     delete ui;
 }
 
-
+/*
+*点击确定按钮
+*/
 void setIP::on_btn_ok_clicked()
 {
     QString ip = ui->test_ip->text();
@@ -31,6 +33,10 @@ void setIP::on_btn_ok_clicked()
     //qDebug()<<QString(ip);
 }
 
+
+/*
+*点击取消按钮
+*/
 void setIP::on_btn_cancle_clicked()
 {
     this->close();
