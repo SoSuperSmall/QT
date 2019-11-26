@@ -22,6 +22,14 @@ struct header
     char tdata[0];
 };
 
+//定义接收结构体
+struct rcvhead
+{
+    short type;
+    short length;
+    char rdata[1024];
+};
+
 /*
 *网卡信息结构体
 */
@@ -129,7 +137,10 @@ void MainWindow::connectServer()
 void MainWindow::read_data()
 {
     QByteArray msg = tcpSocket->readAll();                              //接收服务器发送过来的数据
-    g_qba = msg;                //拷贝tcp接收的内容
+    rcvhead *rh = (rcvhead *)msg.data();
+    //qDebug() << rh->type;
+    if(rh->type == 1)
+        memcpy(g_qba.data(),rh->rdata,rh->length);                //拷贝tcp接收的内容
     mac *pm = (mac*)g_qba.data();
     for(int i=0;i<6;i++)
     {
