@@ -140,21 +140,28 @@ void MainWindow::read_data()
     rcvhead *rh = (rcvhead *)msg.data();
     //qDebug() << rh->type;
     if(rh->type == 1)
-        memcpy(g_qba.data(),rh->rdata,rh->length);                //拷贝tcp接收的内容
-    mac *pm = (mac*)g_qba.data();
-    for(int i=0;i<6;i++)
     {
-        if(strcmp(pm->name,"1") != 0)                        //判断是否有信息
+        memcpy(g_qba.data(),rh->rdata,rh->length);                //拷贝tcp接收的内容
+        mac *pm = (mac*)g_qba.data();
+        for(int i=0;i<6;i++)
         {
-            qDebug() << pm->name << "--" << pm->ipaddr;                //显示网卡信息
+            if(strcmp(pm->name,"1") != 0)                        //判断是否有信息
+            {
+                qDebug() << pm->name << "--" << pm->ipaddr;                //显示网卡信息
+            }
+            if(i != 5)
+                pm++;
         }
-        if(i != 5)
-            pm++;
     }
-    //qDebug() << pm->name<<"---"<<pm->ipaddr;                       //显示一条网卡消息
+    else if(rh->type == 2)
+    {
+        QByteArray rcv;
+        rcv.resize(rh->length);
+        memcpy(rcv.data(),rh->rdata,rh->length);
+        ui->text_info->insertPlainText(QString(QString::number(row,10)+":"+rcv+"\n").arg(row++));       //每次开启程序row都为0，在row行添加文字
+        ui->text_info->moveCursor(QTextCursor::End);                        //设置光标位末尾行
+    }
 
-    //ui->text_info->insertPlainText(QString(QString::number(row,10)+":"+msg+"\n").arg(row++));       //每次开启程序row都为0，在row行添加文字
-    //ui->text_info->moveCursor(QTextCursor::End);                        //设置光标位末尾行
 }
 
 /*
