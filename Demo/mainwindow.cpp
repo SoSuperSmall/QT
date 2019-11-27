@@ -139,7 +139,7 @@ void MainWindow::read_data()
     QByteArray msg = tcpSocket->readAll();                              //接收服务器发送过来的数据
     rcvhead *rh = (rcvhead *)msg.data();
     //qDebug() << rh->type;
-    if(rh->type == 1)
+    if(rh->type == 1)                //消息类型1，网卡消息
     {
         memcpy(g_qba.data(),rh->rdata,rh->length);                //拷贝tcp接收的内容
         mac *pm = (mac*)g_qba.data();
@@ -153,7 +153,7 @@ void MainWindow::read_data()
                 pm++;
         }
     }
-    else if(rh->type == 2)
+    else if(rh->type == 2)            //消息类型2，协议栈消息
     {
         QByteArray rcv;
         rcv.resize(rh->length);
