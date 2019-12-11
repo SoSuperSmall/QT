@@ -2,6 +2,10 @@
 #define SETIP_H
 
 #include <QDialog>
+#include <QFile>
+#include <QDir>
+#include <QRegExpValidator>
+#include <QLineEdit>
 
 namespace Ui {
 class setIP;
@@ -23,6 +27,10 @@ private slots:
 
 private:
     QString ip;
+    void ReadHistory();
+    void WriteHistory(QString ip);
+    QRegExpValidator *ip_Val;
+    QLineEdit *le;
 
 signals:
     void sendData(QString);
