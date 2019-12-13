@@ -37,7 +37,7 @@ void setIP::on_btn_ok_clicked()
     QString port = ui->test_port->text();
     testport = port;
     //emit sendData(ui->test_ip->text());
-    if(ip.compare(""))
+    if(ip.compare("") == 0)
     {
         QMessageBox::warning(this,"sdf","IP地址不能为空",QMessageBox::Yes);
     }
