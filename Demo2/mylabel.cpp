@@ -21,7 +21,7 @@ void myLabel::enterEvent(QEvent *e)
     aw->setStartPos(60);                          //起始位置
     aw->setTriangleInfo(20,12);
     aw->setText("Not Found");
-    for(int i=0;i<shareList.length();i++)
+    for(int i=0;i<shareList.length();i+=2)
     {
         if(shareList[i].compare(this->text()) == 0)
             aw->setText(shareList[i+1]);

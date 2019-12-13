@@ -171,7 +171,7 @@ short MainWindow::getType(QString data)
 }
 
 /*
-*打开输入输入ip与端口窗体
+*打开输入ip与端口窗体
 */
 void MainWindow::on_actionConnect_triggered()
 {
@@ -477,7 +477,6 @@ void MainWindow::on_btn_pausetest_clicked()
  */
 void MainWindow::respose(QString Objectname)
 {
-    qDebug() << Objectname;
     if(nameList.length() == 0)
     {
         QMessageBox::warning(NULL,"warning","插槽未检测到插卡",QMessageBox::Yes);
@@ -486,7 +485,7 @@ void MainWindow::respose(QString Objectname)
         if(count % 2 == 0)
         {
             //遍历nameList，判断点击的lable显示的网卡状态
-            for(int i=0;i<nameList.length();i++)
+            for(int i=0;i<nameList.length();i+=2)
             {
 
                 if(nameList[i].compare(Objectname) == 0)
