@@ -31,6 +31,7 @@ private:
     void WriteHistory(QString ip);
     QRegExpValidator *ip_Val;
     QLineEdit *le;
+    bool check(QString ip);
 
 signals:
     void sendData(QString);
