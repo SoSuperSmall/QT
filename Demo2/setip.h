@@ -32,6 +32,7 @@ private:
     QRegExpValidator *ip_Val;
     QLineEdit *le;
     bool check(QString ip);
+    bool isIpAddr(QString ip);
 
 signals:
     void sendData(QString);

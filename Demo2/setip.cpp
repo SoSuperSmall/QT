@@ -41,10 +41,15 @@ void setIP::on_btn_ok_clicked()
     {
         QMessageBox::warning(this,"sdf","IP地址不能为空",QMessageBox::Yes);
     }
-    else {
+    else if(isIpAddr(ip))
+    {
         emit sendData("IP: "+ip+"\n"+"port: "+port+"\n未连接");
         WriteHistory(ip);
         this->close();
+    }
+    else {
+        QMessageBox::warning(this,"wrong","IP地址格式不正确",QMessageBox::Yes);
+        ui->test_ip->setFocus();
     }
 }
 
@@ -132,3 +137,12 @@ bool setIP::check(QString ip)
      return flag;
 }
 
+bool setIP::isIpAddr(QString ip)
+{
+    QRegExp rx2("((2[0-4]\\d|25[0-5]|[01]?\\d\\d?)\\.){3}(2[0-4]\\d|25[0-5]|[01]?\\d\\d?)");
+        if(rx2.exactMatch(ip))
+        {
+            return true;
+        }
+        return false;
+}
