@@ -6,7 +6,8 @@
 
 QT       += core gui
 QT       += network
-QT       += serialport
+
+LIBS     += -lDbgHelp
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -29,18 +30,26 @@ CONFIG += c++11
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    setip.cpp
+    setip.cpp \
+    mylabel.cpp \
+    arrowwidget.cpp \
+    paramter.cpp
 
 HEADERS += \
         mainwindow.h \
     setip.h \
-    setip.h
+    setip.h \
+    mylabel.h \
+    arrowwidget.h \
+    paramter.h
 
 FORMS += \
         mainwindow.ui \
-    setip.ui
+    setip.ui \
+    paramter.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+RC_FILE = demo.rc

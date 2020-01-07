@@ -4,7 +4,10 @@
 #include <QMainWindow>
 #include <QAbstractSocket>
 #include <QListWidgetItem>
+#include <QPalette>
+#include <QFont>
 #include "setip.h"
+#include "paramter.h"
 
 class QTcpSocket;
 
@@ -18,7 +21,7 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
-    setIP *setipw = new setIP;          //定义全局变量setipw，用于打开新窗口和绑定信号函数与槽函数
+    setIP *setipw = new setIP;        //定义全局变量setipw，用于打开新窗口和绑定信号函数与槽函数
     ~MainWindow();
 
 private:
@@ -28,14 +31,19 @@ private:
     void sendDatatoServer(QString data);
     void addItem_2();
     short getType(QString data);
-    QString g_stestmsg;
     void InitArray();
+    void showInfo();
+    paramter *par;
+
+signals:
+
 
 private slots:
     void on_actionConnect_triggered();
     void on_btn_ok_clicked();
     void read_data();
     void displayError(QAbstractSocket::SocketError);
+    void respose(QString Objectname);
 
 private slots:
     void receiveData(QString data);
@@ -54,11 +62,16 @@ private slots:
 
     void on_btn_endtest_clicked();
 
-    void on_comboBox_activated(const QString &arg1);
+    void on_btn_pausetest_clicked();
+
+    void on_btn_checktest_clicked();
 
 private:
     Ui::MainWindow *ui;
+
 };
+extern QList<QString> shareList;
+extern QString g_stestmsg;
 
 
 
